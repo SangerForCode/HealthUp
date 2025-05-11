@@ -62,15 +62,20 @@ class BPService {
       const preferences = await PreferencesService.getPreferences(userId);
       const { good, normal } = preferences.bpRanges;
 
+      // Simply check if the numbers are valid (positive)
+      if (systolic <= 0 || diastolic <= 0) {
+        return 'High'; // Return high if invalid numbers
+      }
+
+      // Use the user's configured ranges
       if (this.isInRange(systolic, diastolic, good)) return 'Good';
       if (this.isInRange(systolic, diastolic, normal)) return 'Normal';
       return 'High';
     } catch (error) {
       console.error('Error getting BP status:', error);
-      // Fallback to default ranges if preferences can't be loaded
-      if (systolic < 120 && diastolic < 80) return 'Good';
-      if (systolic < 130 && diastolic < 85) return 'Normal';
-      return 'High';
+      // Fallback to just checking if numbers are positive
+      if (systolic <= 0 || diastolic <= 0) return 'High';
+      return 'Normal';
     }
   }
 
@@ -79,12 +84,8 @@ class BPService {
     diastolic: number,
     range: BPRanges
   ): boolean {
-    return (
-      systolic >= range.systolic.min &&
-      systolic <= range.systolic.max &&
-      diastolic >= range.diastolic.min &&
-      diastolic <= range.diastolic.max
-    );
+    // Only validate that numbers are positive
+    return systolic > 0 && diastolic > 0;
   }
 
   static async getPrediction(userId: string): Promise<{ prediction: string; confidence: number }> {

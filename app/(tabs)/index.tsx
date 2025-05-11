@@ -44,18 +44,8 @@ export default function MeasureScreen() {
       return false;
     }
 
-    if (sys < 70 || sys > 200) {
-      showNotification('Systolic pressure should be between 70 and 200 mmHg', 'error');
-      return false;
-    }
-
-    if (dia < 40 || dia > 130) {
-      showNotification('Diastolic pressure should be between 40 and 130 mmHg', 'error');
-      return false;
-    }
-
-    if (pul < 40 || pul > 200) {
-      showNotification('Pulse rate should be between 40 and 200 bpm', 'error');
+    if (sys <= 0 || dia <= 0 || pul <= 0) {
+      showNotification('All values must be greater than 0', 'error');
       return false;
     }
 
@@ -131,8 +121,7 @@ export default function MeasureScreen() {
                       <ThemedText style={styles.measurementText}>
                         {measurement.systolic}/{measurement.diastolic} mmHg
                       </ThemedText>
-                      <ThemedText>Pulse: {measurement.pulse} bpm</ThemedText>
-                      <ThemedText style={styles.dateText}>
+                      <ThemedText>Pulse: {measurement.pulse} bpm</                      <ThemedText style={styles.dateText}>
                         {new Date(measurement.timestamp).toLocaleString()}
                       </ThemedText>
                     </ThemedView>
@@ -167,8 +156,6 @@ export default function MeasureScreen() {
           mode="outlined"
           style={styles.input}
           disabled={isSubmitting}
-          error={systolic !== '' && (parseInt(systolic) < 70 || parseInt(systolic) > 200)}
-          placeholder="90-140 is normal"
         />
 
         <TextInput
@@ -179,8 +166,6 @@ export default function MeasureScreen() {
           mode="outlined"
           style={styles.input}
           disabled={isSubmitting}
-          error={diastolic !== '' && (parseInt(diastolic) < 40 || parseInt(diastolic) > 130)}
-          placeholder="60-90 is normal"
         />
 
         <TextInput
@@ -191,8 +176,6 @@ export default function MeasureScreen() {
           mode="outlined"
           style={styles.input}
           disabled={isSubmitting}
-          error={pulse !== '' && (parseInt(pulse) < 40 || parseInt(pulse) > 200)}
-          placeholder="60-100 is normal"
         />
 
         <Button

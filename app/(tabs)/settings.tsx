@@ -7,11 +7,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import BPService from '@/services/BPService';
-import PreferencesService, { UserPreferences } from '@/services/PreferencesService';
+import PreferencesService, { BPRanges, UserPreferences } from '@/services/PreferencesService';
 import { requestNotificationPermissions, scheduleMeasurementReminder, showNotification } from '@/utils/notifications';
 import { useEffect, useState } from 'react';
 import { StyleSheet, useColorScheme as useSystemColorScheme } from 'react-native';
 import { Button, Dialog, List, Portal, Switch } from 'react-native-paper';
+
+// Define the BPRange interface to match the component's expectations
+interface BPRange {
+  systolic: { min: number; max: number };
+  diastolic: { min: number; max: number };
+}
 
 export default function SettingsScreen() {
   const systemColorScheme = useSystemColorScheme();
@@ -153,6 +159,21 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleRangeChange = async (type: 'normal' | 'high', range: BPRange) => {
+    if (!user || !preferences) return;
+    try {
+      const newRanges = {
+        good: type === 'normal' ? range : preferences.bpRanges.good,
+        normal: type === 'high' ? range : preferences.bpRanges.normal,
+      };
+      await PreferencesService.updateBPRanges(user.id, newRanges);
+      setPreferences({ ...preferences, bpRanges: newRanges });
+      showNotification('BP ranges updated successfully', 'success');
+    } catch (error) {
+      showNotification('Failed to update BP ranges', 'error');
+    }
+  };
+
   if (!user || !preferences) {
     return null;
   }
@@ -206,7 +227,13 @@ export default function SettingsScreen() {
       </List.Section>
 
       <Collapsible title="BP Range Settings">
-        <BPRangesSettings userId={user.id} />
+        <BPRangesSettings 
+          ranges={{
+            normal: preferences.bpRanges.good,
+            high: preferences.bpRanges.normal,
+          }}
+          onRangeChange={handleRangeChange}
+        />
       </Collapsible>
 
       <List.Section>
@@ -282,7 +309,6 @@ export default function SettingsScreen() {
               <TimeInput
                 value={preferences.reminderTime || '09:00'}
                 onChange={(time) => handleReminderTimeChange(time)}
-                mode="24h"
               />
             </Dialog.Content>
             <Dialog.Actions>

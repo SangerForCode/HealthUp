@@ -64,8 +64,16 @@ export async function scheduleMeasurementReminder(
   if (!enabled) return;
 
   const [hours, minutes] = time.split(':').map(Number);
+  const now = new Date();
+  const scheduledTime = new Date(now);
+  scheduledTime.setHours(hours, minutes, 0, 0);
 
-  // Schedule daily reminder
+  // If the time is in the past, schedule for tomorrow
+  if (scheduledTime < now) {
+    scheduledTime.setDate(scheduledTime.getDate() + 1);
+  }
+
+  // Schedule using seconds trigger type which is supported
   await Notifications.scheduleNotificationAsync({
     content: {
       title: 'Blood Pressure Measurement Reminder',
@@ -73,9 +81,22 @@ export async function scheduleMeasurementReminder(
       data: { userId },
     },
     trigger: {
-      type: 'calendar',
-      hour: hours,
-      minute: minutes,
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: Math.floor((scheduledTime.getTime() - now.getTime()) / 1000),
+      repeats: false,
+    },
+  });
+
+  // Schedule the next reminder after 24 hours
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Blood Pressure Measurement Reminder',
+      body: "It's time to measure your blood pressure!",
+      data: { userId },
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: Math.floor((scheduledTime.getTime() - now.getTime()) / 1000) + 86400,
       repeats: true,
     },
   });
