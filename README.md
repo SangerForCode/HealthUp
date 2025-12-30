@@ -1,50 +1,70 @@
-# Welcome to your Expo app 👋
+# HealthUp: Mobile Health Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Project Aim
+HealthUp is a comprehensive, full-stack mobile health tracking application. It provides users with a secure platform to log in, monitor various health metrics, visualize their data over time, and connect with other users for support and accountability.
 
-## Get started
+## Technical Implementation
+The application is built with React Native and Expo, using TypeScript for a robust, type-safe codebase. It employs a sophisticated architecture that includes:
+- **Firebase Backend:** User authentication is handled by Firebase Auth, and data is stored and synced with Firestore.
+- **Local Data Persistence:** Utilizes both `expo-sqlite` and `AsyncStorage` for offline data access and caching.
+- **Modern UI:** The user interface is built with React Native Paper, following Material Design principles.
+- **Data Visualization:** Health data is rendered into meaningful graphs and charts using `react-native-chart-kit`.
+- **Navigation:** It uses Expo Router to manage a tab-based navigation system protected by an authentication flow.
 
-1. Install dependencies
+## Key Features
+- **Secure User Authentication:** Full login and registration system powered by Firebase.
+- **Health Data Visualization:** Interactive plots and charts to help users understand their health trends.
+- **Social Connectivity:** A "Connected Users" feature allows for social interaction and data sharing.
+- **Push Notifications:** Capable of sending reminders or alerts to users via `expo-notifications`.
 
-   ```bash
-   npm install
-   ```
+## Setup Instructions
 
-2. Start the app
+- **Install dependencies:** `npm install`
 
-   ```bash
-   npx expo start
-   ```
+- **Run the app:** `npx expo start`
 
-In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## System Diagram
 
-## Get a fresh project
+```mermaid
 
-When you're ready, run:
+graph TD
 
-```bash
-npm run reset-project
+    subgraph "User's Device"
+
+        A[React Native App];
+
+        B[expo-sqlite];
+
+        C[AsyncStorage];
+
+    end
+
+
+
+    subgraph "Backend"
+
+        D[(Firebase Auth)];
+
+        E[(Firebase Firestore)];
+
+        F[(Expo Push Notifications)];
+
+    end
+
+
+
+    A -- Manages Auth --> D;
+
+    A -- Reads/Writes Data --> E;
+
+    A -- Sends/Receives --> F;
+
+    
+
+    A -- Caches Data --> B;
+
+    A -- Stores Settings --> C;
+
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
