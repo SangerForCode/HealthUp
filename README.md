@@ -27,44 +27,86 @@ The application is built with React Native and Expo, using TypeScript for a robu
 
 ## System Diagram
 
+
+
 ```mermaid
 
-graph TD
+
+
+flowchart TD
+
+
 
     subgraph "User's Device"
 
+
+
         A[React Native App];
+
+
 
         B[expo-sqlite];
 
+
+
         C[AsyncStorage];
 
+
+
     end
+
+
+
+
 
 
 
     subgraph "Backend"
 
+
+
         D[(Firebase Auth)];
+
+
 
         E[(Firebase Firestore)];
 
+
+
         F[(Expo Push Notifications)];
+
+
 
     end
 
 
 
+
+
+
+
     A -- Manages Auth --> D;
+
+
 
     A -- Reads/Writes Data --> E;
 
+
+
     A -- Sends/Receives --> F;
+
+
 
     
 
+
+
     A -- Caches Data --> B;
 
+
+
     A -- Stores Settings --> C;
+
+
 
 ```
